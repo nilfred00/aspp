@@ -192,7 +192,28 @@ def calculate_stackings(lists, d_range=(3.2, 4.6), ang_range=(10,50), latdisp_ra
     return dist_stack, ang_stack, latdisp_stack, AR_pair_stack
 
 def criteria_2D(A_list, A_range, B_list, B_range, C_list):
-    """Takes two list A and B and returns the corresponding values in C."""
+    """
+    Takes the indices of two lists A and B based on value range conditions for each list and returns the corresponding values in the list C.
+    The lists should correspond to the distance, angle and lateral displacement of aromatic ring pairs.
+
+    Parameters
+    ----------
+    A_list : list
+        Data of list A for each frame.
+    A_range : tuple
+        The range condition for the elements of list A on the form (min, max).        
+    B_list : list
+        Data of list B for each frame.
+    B_range : tuple
+        The range condition for the elements of list B on the form (min, max).
+    C_list : list
+        Data of list C for each frame.
+
+    Returns
+    -------
+    C_values : list
+        Flat list containing all the values for list C based on the conditions of the other two lists.
+    """
 
     # Check that the lists are same size
     if not (len(A_list) == len(B_list) == len(C_list)) or not all(len(A_list[i]) == len(B_list[i]) == len(C_list[i]) for i in range(len(A_list))):
@@ -214,6 +235,32 @@ def criteria_2D(A_list, A_range, B_list, B_range, C_list):
     return C_values
 
 def criteria_1D(A_list, A_range, B_list, C_list):
+    """
+    Takes the indices of two lists A and B based on value range conditions for each list and returns the corresponding values in the list C.
+    The lists should correspond to the distance, angle and lateral displacement of aromatic ring pairs.
+
+    Parameters
+    ----------
+    A_list : list
+        Data of list A for each frame.
+    A_range : tuple
+        The range condition for the elements of list A on the form (min, max).        
+    B_list : list
+        Data of list B for each frame.
+    C_list : list
+        Data of list C for each frame.
+
+    Returns
+    -------
+    B_values : list
+        Flat list containing all the values for list B based on the conditions of list A.
+    C_values : list
+        Flat list containing all the values for C based on the conditions of list A.
+    """
+
+    # Check that the lists are same size
+    if not (len(A_list) == len(B_list) == len(C_list)) or not all(len(A_list[i]) == len(B_list[i]) == len(C_list[i]) for i in range(len(A_list))):
+        raise ValueError("Lists are of different shapes.")
     
     # Flatten the lists
     A_flat = np.concatenate(A_list)
