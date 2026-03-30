@@ -96,7 +96,7 @@ def pair_cutoff(universe, idx_rings, cutoff=10, pbc=True, verbose=False):
 
     return dist_list, ang_list, latdisp_list, AR_pair_list
 
-def calculate_stackings(lists, d_range=(3.2, 4.6), ang_range=(10,50), latdisp_range=(0,2), verbose=True):
+def calculate_stackings(lists, d_range=(3.2, 4.6), ang_range=(10,50), latdisp_range=(0,2), circular=True, verbose=True):
     """
     Function for calculating pi-pi stacking of aromatic ring pairs based on three geometric critera.
 
@@ -110,6 +110,8 @@ def calculate_stackings(lists, d_range=(3.2, 4.6), ang_range=(10,50), latdisp_ra
         Min and max of the angle range criteria.
     latdisp_range : tuple
         Min and max of the lateral displacement range criteria.
+    circular : boolean
+        Whether or not to use circular mean and standard deviation such that angles α and 180-α are the same.    
     verbose : boolean
         If True, prints the statistics.
 
@@ -154,7 +156,7 @@ def calculate_stackings(lists, d_range=(3.2, 4.6), ang_range=(10,50), latdisp_ra
 
         # Find indices where the conditions are met
         i = np.where((dist_frame >= d_min) & (dist_frame <= d_max))[0]
-        j = np.where(((ang_frame >= ang_min) & (ang_frame <= ang_max)) | ((ang_frame >= (180-ang_max)) & (ang_frame <= (180-ang_min))))[0]
+        j = np.where(((ang_frame >= ang_min) & (ang_frame <= ang_max)) | (ang_frame >= (180-ang_max)) & (ang_frame <= (180-ang_min)))[0]
         k = np.where((latdisp_frame >= latdisp_min) & (latdisp_frame <= latdisp_max))[0]
         ijk = np.intersect1d(i, np.intersect1d(j,k))
 
@@ -174,10 +176,16 @@ def calculate_stackings(lists, d_range=(3.2, 4.6), ang_range=(10,50), latdisp_ra
     # Calculate the statistics
     dist_mean = np.mean(dist_flat) 
     dist_std = np.std(dist_flat)
+    
+    if circular:
+        ang_flat[ang_flat>90] = 180 - ang_flat[ang_flat>90]
+
     ang_mean= np.mean(ang_flat) 
     ang_std = np.std(ang_flat)
+    
     latdisp_mean = np.mean(latdisp_flat)
     latdisp_std = np.std(latdisp_flat)
+    
     N_mean = np.mean(N_stack)
     N_std =  np.std(N_stack)
 
